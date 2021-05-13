@@ -1,15 +1,16 @@
 <template>
     <div>
-        {{info}}
+        <Breadcrumbs></Breadcrumbs>
+        <router-view/>
     </div>
 </template>
 
 <script>
+import Breadcrumbs from './components/Breadcrumbs'
+
 export default {
-    data() {
-        return {
-            info: "Teste"
-        }
+    components: {
+        Breadcrumbs
     }
-}  
+};
 </script>

@@ -13,9 +13,14 @@ class ProjetoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        return Projeto::orderBy('id')->get();
+    public function index(string $nome = '')
+    {   
+        // Retorno simples (sem paginação)
+        // return Projeto::orderBy('id')->get();
+
+        // Retorno paginado com busca por nome
+        $nome = "%{$nome}%";
+        return Projeto::where('nome_projeto', 'like', $nome)->orderBy('id')->simplePaginate(10);
     }
 
     /**
