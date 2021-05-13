@@ -14,12 +14,6 @@
 <body>
     <!-- MENU SUPERIOR -->
     <div id="menu-superior" class="row">
-        <!-- <div style="display: inline-block;">
-            <img src="/img/ul_menu.png" alt="Placeholder">
-        </div>
-        <div style="float: right;">
-            <img src="/img/ur_menu.png" alt="Placeholder">
-        </div> -->
         <div class="col">
             <img src="/img/ul_menu.png" alt="Placeholder">
         </div>
@@ -36,7 +30,7 @@
             <span>Feature Flags</span>
             <a href="#">Infra</a>
             <a href="#">Demais Sistemas</a>
-            <a href="/" class="selecionado">Projetos</a>
+            <a href="/lista-projetos" class="selecionado">Projetos</a>
             <span>Acessos</span>
             <a href="#">Acesso</a>
 
@@ -91,6 +85,13 @@
         #menu-lateral>*:hover,
         #menu-lateral .selecionado {
             background-color: rgba(255, 255, 255, 0.1);
+        }
+        td {
+            padding: 4px 10px !important;
+        }
+        a {
+            color: red;
+            text-decoration: none;
         }
     </style>
     <script src="{{ mix('js/app.js') }}" type="text/javascript"></script>

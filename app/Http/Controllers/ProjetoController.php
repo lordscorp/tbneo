@@ -20,7 +20,7 @@ class ProjetoController extends Controller
 
         // Retorno paginado com busca por nome
         $nome = "%{$nome}%";
-        return Projeto::where('nome_projeto', 'like', $nome)->orderBy('id')->simplePaginate(10);
+        return Projeto::where('nome_projeto', 'like', $nome)->orderBy('id')->paginate(10);
     }
 
     /**
