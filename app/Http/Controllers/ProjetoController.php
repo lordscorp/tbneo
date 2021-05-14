@@ -14,7 +14,7 @@ class ProjetoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(string $nome = '')
-    {   
+    {
         // Retorno simples (sem paginação)
         // return Projeto::orderBy('id')->get();
 
@@ -49,7 +49,7 @@ class ProjetoController extends Controller
         if ($projeto) {
             return $projeto;
         }
-        
+
         return "Projeto não encontrado.";
     }
 
@@ -64,15 +64,23 @@ class ProjetoController extends Controller
     {
         $projeto = Projeto::find($id);
 
-        if($projeto) {
+        if ($projeto) {
             // Verifica quais campos foram atualizados e aplica alterações
             foreach ($request->projeto as $key => $value) {
-                if($key === "atualizado_por") {
+                if ($key === "atualizado_por") {
                     continue;
                 }
-                $valorAnterior = $projeto->$key;                
+                $valorAnterior = $projeto->$key;
                 $projeto->$key = $value;
-                $log = new Log($id, $key, "preenchido", $valorAnterior, $value, $request->projeto['atualizado_por']);
+                $params = [
+                    "projeto_id" => $id,
+                    "propriedade_alterada" => $key,
+                    "alteracao_realizada" => "preenchido",
+                    "valor_anterior" => $valorAnterior,
+                    "valor_novo" => $value,
+                    "alterado_por" => $request->projeto['atualizado_por']
+                ];
+                $log = new Log($params);
                 $log->save();
             }
             $projeto->save();
@@ -91,7 +99,7 @@ class ProjetoController extends Controller
     public function destroy($id)
     {
         $projeto = Projeto::find($id);
-        if($projeto) {
+        if ($projeto) {
             $projeto->delete();
             return "Projeto excluído com sucesso.";
         }

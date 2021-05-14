@@ -2,7 +2,7 @@
     <div class="container">
         <div class="inner-header card my-3 px-3">
             <div class="card-body p-3">
-                <a href="/editar-projeto"><button class="btn btn-success">Novo</button></a>
+                <a href="/edita-projeto"><button class="btn btn-success">Novo</button></a>
             </div>
         </div>
         <div class="card">
@@ -53,7 +53,7 @@
                     </table>
                     <div v-if="!projetos.length > 0" class="card">
                         <div class="card-body">
-                            <div class="alert alert-secondary">Não foi localizado nenhum projeto. Deseja <a href="/editar-projeto">cadastrar um novo projeto</a> ?</div>
+                            <div class="alert alert-secondary">Não foi localizado nenhum projeto. Deseja <a href="/edita-projeto">cadastrar um novo projeto</a> ?</div>
                         </div>
                     </div>
                 </div>

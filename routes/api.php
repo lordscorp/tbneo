@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LogsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +31,6 @@ Route::prefix('/projeto')->group(function () {
     Route::post('/store', [ProjetoController::class, 'store']);
     Route::put('/{id}', [ProjetoController::class, 'update']);
     Route::delete('/{id}', [ProjetoController::class, 'destroy']);
+
+    Route::get('/{id}/log', [LogsController::class, 'index']);
 });
