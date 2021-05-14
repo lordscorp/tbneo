@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LogsController;
+use App\Http\Controllers\FeaturesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,4 +34,6 @@ Route::prefix('/projeto')->group(function () {
     Route::delete('/{id}', [ProjetoController::class, 'destroy']);
 
     Route::get('/{id}/log', [LogsController::class, 'index']);
+
+    Route::get('/{id}/features', [FeaturesController::class, 'index']);
 });

@@ -17,8 +17,8 @@ class CreateProjetosTable extends Migration
         Schema::create('projetos', function (Blueprint $table) {
             $table->id();
             $table->string('nome_projeto');
-            $table->string('descricao');
-            $table->string('url_jira');
+            $table->string('descricao')->nullable();
+            $table->string('url_jira')->nullable();
             $table->foreignId('criado_por')->constrained('users');
             $table->foreignId('atualizado_por')->constrained('users');
             $table->timestamps();
@@ -39,8 +39,8 @@ class CreateProjetosTable extends Migration
             $table->foreignId('projeto_id')->constrained();
             $table->string('propriedade_alterada');
             $table->string('alteracao_realizada');
-            $table->string('valor_anterior');
-            $table->string('valor_novo');
+            $table->string('valor_anterior')->nullable();;
+            $table->string('valor_novo')->nullable();;
             $table->foreignId('alterado_por')->constrained('users');
             $table->timestamps();
         });

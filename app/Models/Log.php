@@ -10,14 +10,4 @@ class Log extends Model
     use HasFactory;
     
     protected $fillable = ['projeto_id', 'propriedade_alterada', 'alteracao_realizada', 'valor_anterior', 'valor_novo', 'alterado_por'];
-
-    // function __construct(int $projeto_id, string $propriedade_alterada, string $alteracao_realizada = "preenchido", string $valor_anterior, string $valor_novo, int $alterado_por) 
-    // {
-    //     $this->projeto_id = $projeto_id;
-    //     $this->propriedade_alterada = $propriedade_alterada;
-    //     $this->alteracao_realizada = $alteracao_realizada;
-    //     $this->valor_anterior = $valor_anterior;
-    //     $this->valor_novo = $valor_novo;
-    //     $this->alterado_por = $alterado_por;
-    // }
 }

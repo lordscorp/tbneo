@@ -19,7 +19,7 @@
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs">
                     <li class="nav-item" v-for="(aba, key) in abas" :key="key">
-                        <a :class="'nav-link' + (aba === abaAtual ? ' active' : '')" @click="abaAtual = aba" href="#">{{capitalize(aba)}}</a>
+                        <a :class="'nav-link' + (aba === abaAtual ? ' active' : '')" @click="abaAtual = aba" style="cursor: pointer">{{capitalize(aba)}}</a>
                     </li>
                 </ul>
             </div>
@@ -76,7 +76,7 @@
                     <div class="card-header">Dados do Projeto</div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col-6">
                                 <label for="url_jira">URL Jira</label>
                                 <div class="btn-group">
                                     <input type="text" id="url_jira" class="form-control" v-model="projeto.url_jira"><a :href="projeto.url_jira" title="Abrir link" target="_blank"><button class="btn btn-danger"><i class="bi bi-box-arrow-up-right"></i></button></a>
@@ -92,7 +92,56 @@
                 <div class="card">
                     <div class="card-header">Features</div>
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" v-model="filtroFeatures" placeholder="Digite para filtrar">
+                                    <button @click="filtroFeatures = ''" class="btn btn-secondary">Limpar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Tabela de features -->
+                        <div class="row">
+                            <div class="col">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <td>Nome</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(feature, key) in featuresFiltradas" :key="key">
+                                            <td>
+                                                <a :href="feature.url">{{feature.nome_feature}}</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Paginação -->
+                        <div class="row my-3">
+                        <div class="col-2">
+                            <nav aria-label="Paginação">
+                                <ul class="pagination">
+                                    <li class="page-item"><a href="#" @click="buscaFeatures(respostaAPI.first_page_url)" class="page-link">&lt;&lt;</a></li>
+                                    <li :class="respostaAPI.prev_page_url ? 'page-item' : 'page-item disabled'"><a href="#" @click="buscaProjetos(respostaAPI.prev_page_url)" class="page-link">&lt;</a></li>
+                                    <li class="page-item disabled"><a href="#" class="page-link">{{respostaAPI.current_page}}</a></li>
+                                    <li :class="respostaAPI.next_page_url ? 'page-item' : 'page-item disabled'"><a href="#" @click="buscaProjetos(respostaAPI.next_page_url)" class="page-link">&gt;</a></li>
+                                    <li :class="respostaAPI.last_page_url ? 'page-item' : 'page-item disabled'"><a href="#" @click="buscaProjetos(respostaAPI.last_page_url)" class="page-link">&gt;&gt;</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col">
 
+                        </div>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <div class="form-control">Total de registros:</div>
+                                <div class="form-control" style="max-width: 5em;">{{respostaAPI.total}}</div>
+                            </div>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -121,14 +170,20 @@
 export default {
     data() {
         return {
-            filtroNome: "",
-            projeto: {},
+            filtroFeatures: "",
+            projeto: {
+                nome_projeto: "",
+                descricao: "",
+                url_jira: ""
+            },
             projetoRaw: {},
             respostaAPI: {},
             usuario: {},
             usuarios: [],
             abas: ['geral', 'features', 'log'],
             abaAtual: 'geral',
+            logs: [],
+            features: [],
             avisos: {
                 sucesso: {
                     tipo: "success",
@@ -137,6 +192,10 @@ export default {
                 erro: {
                     tipo: "danger",
                     texto: "Não foi possível gravar as informações. Por favor, verifique as informações preenchidas."
+                },
+                nome: {
+                    tipo: "warning",
+                    texto: "É necessário informar o nome do projeto."
                 }
             },
             avisoAtual: false,
@@ -148,6 +207,13 @@ export default {
         if(this.$route.params.id)
             this.buscaProjeto();
     },
+    computed: {
+        featuresFiltradas: function() {
+            return this.features?.filter((feature) => {
+                return feature.nome_feature.toUpperCase().includes(this.filtroFeatures.toUpperCase())
+            })
+        }
+    },
     methods: {
         buscaProjeto: function () {
             axios
@@ -155,7 +221,20 @@ export default {
                 .then((response) => {
                     this.projetoRaw = response.data;
                     this.projeto = {...response.data};
-                    this.buscaLog()
+                    this.buscaFeatures();
+                    this.buscaLog();
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        },
+        buscaFeatures: function (urlPagina = false) {
+            const getUrl = urlPagina ? urlPagina : "/api/projeto/"+this.$route.params.id+"/features"
+            axios
+                .get(getUrl)
+                .then((response) => {
+                    this.respostaAPI = response.data;
+                    this.features = this.respostaAPI.data;
                 })
                 .catch((err) => {
                     console.error(err);
@@ -208,8 +287,14 @@ export default {
             return typeof(nome) === "string" ? nome : "";
         },
         salvar: function() {
-            if(this.$route.params.id) {
-                // Atualiza dados do projeto atual
+            // Valida nome (obrigatório)
+            if(!this.projeto.nome_projeto){
+                this.mostraAviso(this.avisos.nome);
+                document.querySelector('#nome_projeto').focus()
+                return;
+            }
+
+            if(this.$route.params.id) {     // Atualiza dados do projeto atual
                 // Verifica quais campos foram alterados para enviar somente alterações
                 let dados = {
                     atualizado_por: this.usuario.id
@@ -223,20 +308,27 @@ export default {
                 axios
                 .put("/api/projeto/"+this.$route.params.id, {projeto: dados})
                 .then((response) => {
-                    // Projeto cadastrado com sucesso. Cadastra features (se houver)
-                    this.salvarFeatures(response.data.id);
                     this.mostraAviso(this.avisos.sucesso);
                     this.buscaProjeto();
                 })
+                .catch((err) => {
+                    console.log(err);
+                    this.mostraAviso(this.avisos.erro);
+                })
 
             }
-            else {
-                // Grava novo projeto
-            }
-        },
-        salvarFeatures: function (idProjeto) {
-            if(!idProjeto > 0) {
-                return
+            else {      // Grava novo projeto
+                this.projeto.criado_por = this.usuario.id;
+                this.projeto.atualizado_por = this.usuario.id;
+                axios
+                .post("/api/projeto/store", {projeto: this.projeto})
+                .then((response) => {
+                    this.mostraAviso(this.avisos.sucesso);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    this.mostraAviso(this.avisos.erro);
+                })
             }
         }
     },
