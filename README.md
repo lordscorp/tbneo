@@ -57,15 +57,116 @@ Pronto! Para executar a aplicação no servidor local (desenvolvimento), execute
 php artisan serve
 npm run watch
 ```
+
 ---
-## Testes
 
-### Testes unitários e de integração
-```
-php artisan test
+## Rotas da API
+
+URL Base (local): `http://localhost:8000/api/`
+
+`/usuarios`: Retorna array com todos os usuários cadastrados;
+```json
+[
+    {
+        "id": 1,
+        "name": "Renan Gomes",
+        "email": "renan...",
+        "email_verified_at": null,
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 2,
+        "name": "Fulano de tal",
+        "email": "fulano@tal.com",
+        "email_verified_at": null,
+        "created_at": null,
+        "updated_at": null
+    },
+    ...
+]
 ```
 
-### Testes e2e
+`/projetos`: Retorna objeto com suporte a paginação que contém array de todos os projetos cadastrados
+
+Opcional: pode ser acrescentada uma string como parâmetro de filtro de resultados por nome (`/projetos/{nome}`)
+
+```json
+{
+"current_page": 1,
+"data": [
+    {
+        "id": 1,
+        "nome_projeto": "PROJETO 52",
+        "descricao": "Projeto teste 52",
+        "url_jira": "https://www.google.com",
+        "criado_por": 1,
+        "atualizado_por": 1,
+        "created_at": "2021-05-13T04:33:18.000000Z",
+        "updated_at": "2021-05-14T01:57:29.000000Z"
+    },
+    {
+        "id": 2,
+        "nome_projeto": "Outro projeto",
+        "descricao": "Descrição nova",
+        "url_jira": "http://link.io",
+        "criado_por": 1,
+        "atualizado_por": 1,
+        "created_at": "2021-05-13T04:39:11.000000Z",
+        "updated_at": "2021-05-14T01:02:43.000000Z"
+    },
+    {
+        ...
+    }
+],
+"first_page_url": "http://localhost:8000/api/projetos?page=1",
+"from": 1,
+"last_page": 2,
+"last_page_url": "http://localhost:8000/api/projetos?page=2",
+"links": [
+    {
+    "url": null,
+    "label": "&laquo; Previous",
+    "active": false
+    },
+    {
+    "url": "http://localhost:8000/api/projetos?page=1",
+    "label": "1",
+    "active": true
+    },
+    {
+    "url": "http://localhost:8000/api/projetos?page=2",
+    "label": "2",
+    "active": false
+    },
+    {
+    "url": "http://localhost:8000/api/projetos?page=2",
+    "label": "Next &raquo;",
+    "active": false
+    }
+],
+"next_page_url": "http://localhost:8000/api/projetos?page=2",
+"path": "http://localhost:8000/api/projetos",
+"per_page": 10,
+"prev_page_url": null,
+"to": 10,
+"total": 18
+}
 ```
-npm run test
+
+Rotas complementares:
+
+```php
+Route::prefix('/projeto')->group(function () {
+    Route::get('/{id}', [ProjetoController::class, 'show']);
+    Route::post('/store', [ProjetoController::class, 'store']);
+    Route::put('/{id}', [ProjetoController::class, 'update']);
+    Route::delete('/{id}', [ProjetoController::class, 'destroy']);
+
+    Route::get('/{id}/log', [LogsController::class, 'index']);
+
+    Route::get('/{id}/features', [FeaturesController::class, 'index']);
+});
 ```
+
+Renan Moreira Gomes - https://github.com/lordscorp/
